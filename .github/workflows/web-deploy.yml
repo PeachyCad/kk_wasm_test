@@ -22,7 +22,7 @@ jobs:
       - name: Run "flutter pub get"
         run: flutter pub get
       - name: Run "flutter build web"
-        run: flutter build web --base-href=/kk_wasm_test/ --release
+        run: flutter build web --base-href=/kk_wasm_test/ --wasm --release
 
       - name: Push changes
         run: |
