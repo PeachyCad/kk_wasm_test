@@ -42,7 +42,13 @@ jobs:
             git switch gh-pages
             # copy the build that is there in ROOT/build/web into ROOT/build/web-deploy
             cp -R ../web/* .
+            echo ""
+            echo "Git status:"
+            echo ""
             git status
+            echo ""
+            echo "Adding files..."
+            echo ""
             git add .
             # add commit of the previous commit from main
             echo ""
