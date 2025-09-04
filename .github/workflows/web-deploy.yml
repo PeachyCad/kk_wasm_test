@@ -1,0 +1,52 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    # Update branch according from where you will be pushing the code
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      my_secret: ${{secrets.ACCESS_TOKEN}}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Run "flutter clean"
+        run: flutter clean
+      - name: Run "flutter pub get"
+        run: flutter pub get
+      - name: Run "flutter build web"
+        run: flutter build web --base-href=/kk_wasm_test/ --release
+
+      - name: Push changes
+        run: |
+            cd build
+            mkdir web-deploy
+            cd web-deploy
+            #! Update with your Email ID associated with GitHub
+            git config --global user.email 348111@mail.ru
+            #! Update with your username associated with GitHub
+            git config --global user.name PeachyCad
+            git config --global init.defaultBranch main
+            git init
+            # the repository to push the deploy into
+            #! Update the following with your username and repository
+            git remote add origin https://${{secrets.ACCESS_TOKEN}}@github.com/PeachyCad/kk_wasm_test.git
+            git fetch origin gh-pages
+            git switch gh-pages
+            # copy the build that is there in ROOT/build/web into ROOT/build/web-deploy
+            cp -R ../web/* .
+            git status
+            git add .
+            # add commit of the previous commit from main
+            echo ""
+            echo "Committing to gh-pages: ${{ github.event.head_commit.message }}"
+            echo ""
+            git commit -m "${{ github.event.head_commit.message }}"
+            git push origin gh-pages
